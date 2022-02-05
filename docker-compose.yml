@@ -7,3 +7,16 @@ services:
     network_mode: bridge
     environment:
       - SERVICES=sqs
+  server_builder:
+    container_name: "go_server_build"
+    image: sqs_issue_notifier_server_builder
+    build: ./docker-go
+    network_mode: bridge
+    volumes:
+      - ".:/opt/go/ws/src/github.com/SirGFM/sqs-issue-notifier"
+      - "./bin:/opt/go/ws/bin"
+    working_dir: "/opt/go/ws/src/github.com/SirGFM/sqs-issue-notifier/server"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID-test}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY-test}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION-us-east-1}

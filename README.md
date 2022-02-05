@@ -33,3 +33,12 @@ export AWS_DEFAULT_REGION="us-east-1"
 ```
 
 These are used by both applications!
+
+### Compiling the Go server
+
+```bash
+docker-compose build server_builder
+docker-compose run server_builder go install .
+```
+
+The binary will be compiled to a `bin` directory, which will be created if it does not exist.
