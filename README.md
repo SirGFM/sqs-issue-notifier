@@ -34,6 +34,22 @@ export AWS_DEFAULT_REGION="us-east-1"
 
 These are used by both applications!
 
+### Slack configuration
+
+1. Create a workspace
+1. Click on the workspace's name (top left) and select 'Settings & administration'
+1. Click on Menu (top left) and select 'Configure apps'
+1. Click on Build (on the top right corner)
+1. Enable and add a Webhooks to the Workspace for each channel that may receive messages, in 'Incoming Webhooks'
+
+### Python worker
+
+Before launching the worker, be sure to adjust the configuration file (`worker/config.json`) to your needs!
+
+```bash
+docker-compose up -d worker
+```
+
 ### Compiling the Go server
 
 ```bash

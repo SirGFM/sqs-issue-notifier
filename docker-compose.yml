@@ -7,6 +7,20 @@ services:
     network_mode: bridge
     environment:
       - SERVICES=sqs
+  worker:
+    container_name: "py_worker"
+    image: sqs_issue_notifier_worker
+    build: ./docker-py
+    network_mode: bridge
+    volumes:
+      - "./worker:/opt/worker"
+    working_dir: "/opt/worker"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID-test}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY-test}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION-us-east-1}
+    user: py-worker
+    command: python3 main.py --config ./config.json
   server_builder:
     container_name: "go_server_build"
     image: sqs_issue_notifier_server_builder

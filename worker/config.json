@@ -1,0 +1,9 @@
+{
+	"channels": {
+		"general": "https://hooks.slack.com/services/<WS_CHANNEL_BOT_STUFF>",
+		...
+	},
+	"aws_endpoint": "http://localstack:4566",
+	"aws_queue": "http://localstack:4566/000000000000/issues-queue",
+	"timeout": 20
+}
