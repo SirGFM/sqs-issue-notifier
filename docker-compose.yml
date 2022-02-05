@@ -4,14 +4,16 @@ services:
   localstack:
     container_name: "localstack_0_13_3"
     image: localstack/localstack:0.13.3
-    network_mode: bridge
+    networks:
+      - sqs_test_net
     environment:
       - SERVICES=sqs
   worker:
     container_name: "py_worker"
     image: sqs_issue_notifier_worker
     build: ./docker-py
-    network_mode: bridge
+    networks:
+      - sqs_test_net
     volumes:
       - "./worker:/opt/worker"
     working_dir: "/opt/worker"
@@ -25,7 +27,8 @@ services:
     container_name: "go_server_build"
     image: sqs_issue_notifier_server_builder
     build: ./docker-go
-    network_mode: bridge
+    networks:
+      - sqs_test_net
     volumes:
       - ".:/opt/go/ws/src/github.com/SirGFM/sqs-issue-notifier"
       - "./bin:/opt/go/ws/bin"
@@ -34,3 +37,8 @@ services:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID-test}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY-test}
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION-us-east-1}
+
+# Using a custom network allows accessing containers by their name.
+networks:
+  sqs_test_net:
+    driver: bridge
