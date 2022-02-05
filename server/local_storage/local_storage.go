@@ -69,6 +69,9 @@ type Store interface {
 	// again until it's either Close()'d or Remove()'d.
 	Get() (Data, error)
 
+	// Count the number of known stored messages.
+	Count() int
+
 	// Wait blocks until anything was stored in the local storage. Returns
 	// ErrStoreClosed if the Store was closed, and ErrTimedOut if no
 	// message was received in a timely manner. A 'nil' return indicates
@@ -266,6 +269,14 @@ func (f fsStore) Wait() error {
 
 	f.wait.cond.L.Unlock()
 	return err
+}
+
+func (f fsStore) Count() int {
+	f.wait.cond.L.Lock()
+	n := f.wait.queued
+	f.wait.cond.L.Unlock()
+
+	return n
 }
 
 func (f fsStore) Close() error {

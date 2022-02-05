@@ -36,6 +36,11 @@ func TestLocalFS(t *testing.T) {
 		t.Errorf("Store: Expected error '%+v' but got '%+v'", want, got)
 	}
 
+	num := store.Count()
+	if want, got := 1, num; want != got {
+		t.Errorf("Count: Expected '%+d' messages but got '%+d'", want, got)
+	}
+
 	// Check that the local storage is properly notified about events.
 	err = store.Wait()
 	if err != nil {
@@ -50,6 +55,11 @@ func TestLocalFS(t *testing.T) {
 	} else if bytes.Compare(msg, data.Bytes()) != 0 {
 		t.Errorf("Get: Message does not match! Want '%s' but got '%s'",
 				string(msg), string(data.Bytes()))
+	}
+
+	num = store.Count()
+	if want, got := 1, num; want != got {
+		t.Errorf("Count: Expected '%+d' messages but got '%+d'", want, got)
 	}
 
 	// Also ensure that a message cannot be received until it was processed
@@ -73,6 +83,11 @@ func TestLocalFS(t *testing.T) {
 	err = repData.Remove()
 	if err != nil {
 		t.Errorf("Remove: Failed to remove the message '%s': %+v", msg, err)
+	}
+
+	num = store.Count()
+	if want, got := 0, num; want != got {
+		t.Errorf("Count: Expected '%+d' messages but got '%+d'", want, got)
 	}
 
 	_, err = store.Get()
@@ -201,6 +216,12 @@ func TestPrepopulated(t *testing.T) {
 	// is received.
 	recv_msg := make([]bool, len(test_cases))
 	recv := NewFS(dir, time.Millisecond)
+
+	num := recv.Count()
+	if want, got := len(test_cases), num; want != got {
+		t.Errorf("Count: Expected '%+d' messages but got '%+d'", want, got)
+	}
+
 	for i := range test_cases {
 		err := recv.Wait()
 		if err != nil {
@@ -227,6 +248,11 @@ func TestPrepopulated(t *testing.T) {
 	}
 
 	// Ensure the local storage is empty.
+	num = recv.Count()
+	if want, got := 0, num; want != got {
+		t.Errorf("Count: Expected '%+d' messages but got '%+d'", want, got)
+	}
+
 	err = recv.Wait()
 	if want, got := ErrTimedOut, err; want != got {
 		t.Errorf("Wait: Expected error '%+v' but got '%+v'", want, got)
