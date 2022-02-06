@@ -11,6 +11,25 @@ A simple system for receiving issues over an HTTP API and forwarding them to a S
 
 ## Quick start
 
+Before launching everything, adjust the worker's configuration file (`worker/config.json`) to your needs!
+
+```bash
+docker-compose build
+docker-compose up -d localstack
+docker exec localstack_0_13_3 awslocal sqs create-queue --queue-name issues-queue
+docker-compose up -d worker
+docker-compose up -d server
+curl -H 'Accept: application/json' --data '{"channel": "general", "message": ".done"}' http://localhost:8888/message
+```
+
+## Manual compilation
+
+Start by building every container:
+
+```bash
+docker-compose build
+```
+
 ### Localstack (SQS)
 
 ```bash
@@ -50,7 +69,17 @@ Before launching the worker, be sure to adjust the configuration file (`worker/c
 docker-compose up -d worker
 ```
 
-### Compiling the Go server
+### Go server
+
+The configuration file for the server is in `server-data`. It should work by default (as long as a queue named `issues-queue` was created).
+
+```bash
+docker-compose up -d server
+```
+
+### Compiling the Go server for testing
+
+For testing purposes, it's easier to compile the server manually. In this case, use `server_builder` directly:
 
 ```bash
 docker-compose build server_builder

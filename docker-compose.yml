@@ -8,6 +8,7 @@ services:
       - sqs_test_net
     environment:
       - SERVICES=sqs
+
   worker:
     container_name: "py_worker"
     image: sqs_issue_notifier_worker
@@ -23,6 +24,7 @@ services:
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION-us-east-1}
     user: py-worker
     command: python3 main.py --config ./config.json
+
   server_builder:
     container_name: "go_server_build"
     image: sqs_issue_notifier_server_builder
@@ -37,6 +39,27 @@ services:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID-test}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY-test}
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION-us-east-1}
+
+  server:
+    container_name: "go_server"
+    image: sqs_issue_notifier_server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: prod
+    networks:
+      - sqs_test_net
+    ports:
+      - "8888:8888"
+    volumes:
+      - "./server-data:/opt/server/server-data"
+    working_dir: "/opt/server"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID-test}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY-test}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION-us-east-1}
+    user: go-server
+    command: bash -c "mkdir -p /opt/server/server-data/storage && /opt/server/server -confFile /opt/server/server-data/config.json"
 
 # Using a custom network allows accessing containers by their name.
 networks:

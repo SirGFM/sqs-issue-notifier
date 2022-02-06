@@ -1,0 +1,8 @@
+{
+	"IP": "0.0.0.0",
+	"Port": 8888,
+	"TimeoutMS": 60000,
+	"LocalStore": "/opt/server/server-data/storage",
+	"Endpoint": "http://localstack:4566",
+	"Queue": "http://localstack:4566/000000000000/issues-queue"
+}
